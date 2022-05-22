@@ -1,3 +1,6 @@
+---
+output: html_document
+---
 # Course - Supervised Learning 
 
 ##### NOTE: 
@@ -39,16 +42,37 @@ head(freeny)
 
 
 ```R
+df <- freeny
+head(df)
+dim(df)
+#------------------------
+
+# find mean 
+colnames(df)
+mean(df$lag.quarterly.revenue)
+median(df$price.index)
+mean(df$income.level)
+mean(df$market.potential)
+
 
 ```
 
 
 ```R
+df <- as.data.frame(df)
+head(df)
+
+library(corrplot)
+M <- cor(df)
+corrplot(M)
 
 ```
 
 
 ```R
+head(df)
+df$price.income.ratio <- df$price.index/df$income.level
+head(df)
 
 ```
 
@@ -66,16 +90,46 @@ head(freeny)
 
 
 ```R
+head(df)
+model <- lm(y ~ lag.quarterly.revenue+price.index, data= df)
+model
+```
+
+
+
+```R
+summary(model)
+
+set.seed(100)
+trainrow <- sample(1:nrow(df),0.5*nrow(df))
+train_data <- df[trainrow,]
+test_data <- df[-trainrow,]
+head(train_data)
+dim(train_data)
+dim(test_data)
+modelf <- lm(y ~ lag.quarterly.revenue+price.index+income.level+market.potential+price.income.ratio, data = train_data)
+modelf
 
 ```
 
 
 ```R
+ypred <- predict(modelf, test_data)
+actuals_preds <- data.frame(cbind(actuals=test_data$y, predecteds = ypred))
+head(actuals_preds)
+correlation_accuracy <- cor(actuals_preds)
+correlation_accuracy
+corrplot(correlation_accuracy)
+# residual
+residual <- actuals_preds$predecteds - actuals_preds$actual
+residual <- data.frame(residual)
+head(cbind(actuals_preds,residual))
 
-```
-
-
-```R
+plot(x=actuals_preds$predecteds, y= actuals_preds$actuals,
+     xlab='Predicted Values',
+     ylab='Actual Values',
+     main='Predicted vs. Actual Values')
+abline(a=0, b=1)
 
 ```
 

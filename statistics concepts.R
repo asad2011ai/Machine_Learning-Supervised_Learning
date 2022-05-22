@@ -60,3 +60,29 @@ sd(x)
 # 4: for normal data distribution or our data is not skewed then use standard deviation
 
 ########################################
+#correlation
+########################################
+#covariance
+# it measure how much two variable varies together
+x <- 1:5
+y <- c(6,2,4,4,10)
+cov(x,y)
+#-----------------------------
+
+#correlation 
+# if correlation value is high it mean these two variable are similar (linear relationship) so we skip one variable
+x <-c(1:5)
+y <-c(6,2,4,4,10)
+cor(x,y)
+#graph
+install.packages("corrplot")
+library(corrplot)
+corrplot(x)
+?corrplot
+#-----------------------------------------
+install.packages("tidyr")
+library(dplyr)
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("broom")
+install.packages("ggpubr")
