@@ -46,7 +46,7 @@ df <- freeny
 head(df)
 dim(df)
 #------------------------
-
+# 01
 # find mean 
 colnames(df)
 mean(df$lag.quarterly.revenue)
@@ -59,17 +59,17 @@ mean(df$market.potential)
 
 
 ```R
+# 02
 df <- as.data.frame(df)
-head(df)
-
+#head(df)
 library(corrplot)
 M <- cor(df)
 corrplot(M)
-
 ```
 
 
 ```R
+# 03
 head(df)
 df$price.income.ratio <- df$price.index/df$income.level
 head(df)
@@ -90,6 +90,7 @@ head(df)
 
 
 ```R
+#01
 head(df)
 model <- lm(y ~ lag.quarterly.revenue+price.index, data= df)
 model
@@ -98,8 +99,10 @@ model
 
 
 ```R
+# 02
 summary(model)
 
+# 03
 set.seed(100)
 trainrow <- sample(1:nrow(df),0.5*nrow(df))
 train_data <- df[trainrow,]
@@ -114,6 +117,7 @@ modelf
 
 
 ```R
+# 04
 ypred <- predict(modelf, test_data)
 actuals_preds <- data.frame(cbind(actuals=test_data$y, predecteds = ypred))
 head(actuals_preds)
@@ -124,7 +128,7 @@ corrplot(correlation_accuracy)
 residual <- actuals_preds$predecteds - actuals_preds$actual
 residual <- data.frame(residual)
 head(cbind(actuals_preds,residual))
-
+# 05
 plot(x=actuals_preds$predecteds, y= actuals_preds$actuals,
      xlab='Predicted Values',
      ylab='Actual Values',
