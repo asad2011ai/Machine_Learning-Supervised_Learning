@@ -106,3 +106,28 @@ table(pred, HouseVotes84$Class)
 model <- naiveBayes(Class ~ ., data = HouseVotes84, lablace=3)
 pred <- predict(model, HouseVotes84[,-1])
 table(pred, HouseVotes84$Class)
+##########################################################
+#                      ANN
+##########################################################
+
+library(MASS)
+?Boston
+data <- Boston
+str(data)
+# normalization
+# (x - min)/ max - min
+
+maxv <- apply(data, 2, max)
+minv <- apply(data, 2, min)
+maxv
+
+train <- as.data.frame(scale(data, center = minv, scale = maxv - minv))
+str(train)
+
+#install.packages('neuralnet')
+library(neuralnet)
+n <- names(train)
+f <- as.formula("medv ~ rm+crim+lstat")
+nn <- neuralnet(formula = f, data = train, hidden = c(10,5,2), linear.output = T)
+ 
+plot(nn) 
