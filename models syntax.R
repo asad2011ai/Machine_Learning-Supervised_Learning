@@ -131,3 +131,71 @@ f <- as.formula("medv ~ rm+crim+lstat")
 nn <- neuralnet(formula = f, data = train, hidden = c(10,5,2), linear.output = T)
  
 plot(nn) 
+
+######################################################
+# Evaluation method
+######################################################
+install.packages("tidyverse")
+library(tidyverse)
+library(caret)
+
+# load data
+data("PimaIndiansDiabetes2", package = "mlbench")
+pima.data <- na.omit(PimaIndiansDiabetes2)
+
+# inspect the data
+sample_n(pima.data, 3)
+# split
+set.seed(123)
+training.samples <- pima.data$diabetes %>%
+  createDataPartition(p = 0.8, list = FALSE)
+
+train.data <- pima.data[training.samples,]
+test.data <- pima.data[-training.samples,]
+
+install.packages("MASS")
+library(MASS)
+
+# fit lda model
+
+fit <- lda(diabetes~., data = train.data)
+# make prediction 
+
+prediction <- predict(fit, test.data)
+prediction.probability <- prediction$posterior[,2]
+predicted.classes <- prediction$class
+observed.classes <- test.data$diabetes
+
+
+accuracy <- mean(observed.classes == predicted.classes)
+accuracy
+error <- mean(observed.classes != predicted.classes)
+error
+# confusion matrix
+table(observed.classes, predicted.classes)
+# confusion matrix with proportion 
+table(observed.classes, predicted.classes) %>%
+  prop.table() %>% round(digits = 3)
+
+# confusion matrix from caret library
+confusionMatrix(predicted.classes, observed.classes, positive = "pos")
+
+# ROC curve
+
+
+library(pROC)
+res.roc <- roc(observed.classes, prediction.probability)
+plot.roc(res.roc, print.auc = TRUE)
+
+# extract region of interest
+
+roc.data <- data_frame(
+  thresholds = res.roc$thresholds,
+  sensitivity = res.roc$sensitivities,
+  specificity = res.roc$specificities
+)
+
+# get the probability threshold for specificity =0.6
+
+plot.roc(res.roc,print.auc = TRUE, print.thres = "best")
+plot.roc(res.roc, print.thres = c(0.3,0.5,0.7))
